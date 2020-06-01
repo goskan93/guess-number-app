@@ -16,6 +16,7 @@ const styles = StyleSheet.create({
     paddingTop: 36,
     backgroundColor: Colors.primary,
     alignItems: "center",
+    fontFamily: "open-sans-bold",
   },
   headerTitle: {
     color: "black",
