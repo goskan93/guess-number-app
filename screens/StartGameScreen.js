@@ -1,14 +1,38 @@
-import React, { useState } from "react";
-import { View, Text, StyleSheet, Button, Keyboard, TouchableWithoutFeedback, Alert } from "react-native";
+import React, { useState, useEffect } from "react";
+import {
+  View,
+  Text,
+  StyleSheet,
+  Button,
+  Keyboard,
+  TouchableWithoutFeedback,
+  Alert,
+  Dimensions,
+  ScrollView,
+  KeyboardAvoidingView,
+} from "react-native";
 import Card from "../components/Card";
 import Colors from "../constants/colors";
 import Input from "../components/Input";
 import Number from "../components/Number";
 import MainButton from "../components/MainButton";
+
+// const WIDTH = Dimensions.get('window')
+
 const StartGameScreen = (props) => {
   const [enteredValue, setEnteredValue] = useState("");
   const [confirmed, setConfirmed] = useState(false);
   const [selectedNumber, setSelectedNumber] = useState();
+  const [buttonWidth, setButtonWidth] = useState(Dimensions.get("window").width / 4);
+
+  useEffect(() => {
+    const updateLayout = () => {
+      setButtonWidth(Dimensions.get("window").width / 4);
+    };
+    Dimensions.addEventListener("change", updateLayout);
+
+    return () => Dimensions.removeEventListener("change", updateLayout);
+  });
 
   const numberInputHandler = (value) => {
     setEnteredValue(value.replace(/[^0-9]/g, ""));
@@ -45,36 +69,40 @@ const StartGameScreen = (props) => {
   }
 
   return (
-    <TouchableWithoutFeedback
-      onPress={() => {
-        Keyboard.dismiss();
-      }}
-    >
-      <View style={styles.screen}>
-        <Text style={styles.title}>Start new game!</Text>
-        <Card style={styles.cardContainer}>
-          <Text>Select a number:</Text>
-          <Input
-            style={styles.input}
-            blurOnSubmit
-            autoCorrect={false}
-            keyboardType="numeric"
-            maxLength={2}
-            onChangeText={numberInputHandler}
-            value={enteredValue}
-          />
-          <View style={styles.buttonContainer}>
-            <View style={styles.button}>
-              <Button title="Reset" color={Colors.secondary} onPress={resetInputHandler} />
-            </View>
-            <View style={styles.button}>
-              <Button title="Confirm" color={Colors.primary} onPress={confirmInputHandler} />
-            </View>
+    <ScrollView>
+      <KeyboardAvoidingView behavior="padding" keyboardVerticalOffset={30}>
+        <TouchableWithoutFeedback
+          onPress={() => {
+            Keyboard.dismiss();
+          }}
+        >
+          <View style={styles.screen}>
+            <Text style={styles.title}>Start new game!</Text>
+            <Card style={styles.cardContainer}>
+              <Text>Select a number:</Text>
+              <Input
+                style={styles.input}
+                blurOnSubmit
+                autoCorrect={false}
+                keyboardType="numeric"
+                maxLength={2}
+                onChangeText={numberInputHandler}
+                value={enteredValue}
+              />
+              <View style={styles.buttonContainer}>
+                <View style={{ width: buttonWidth }}>
+                  <Button title="Reset" color={Colors.secondary} onPress={resetInputHandler} />
+                </View>
+                <View style={{ width: buttonWidth }}>
+                  <Button title="Confirm" color={Colors.primary} onPress={confirmInputHandler} />
+                </View>
+              </View>
+            </Card>
+            {confirmedOutput}
           </View>
-        </Card>
-        {confirmedOutput}
-      </View>
-    </TouchableWithoutFeedback>
+        </TouchableWithoutFeedback>
+      </KeyboardAvoidingView>
+    </ScrollView>
   );
 };
 
@@ -89,8 +117,9 @@ const styles = StyleSheet.create({
     marginVertical: 10,
   },
   cardContainer: {
-    width: 300,
-    maxWidth: "80%",
+    width: "80%",
+    minWidth: 300,
+    maxWidth: "95%",
     alignItems: "center",
   },
   buttonContainer: {
@@ -99,9 +128,10 @@ const styles = StyleSheet.create({
     justifyContent: "space-between",
     paddingHorizontal: 15,
   },
-  button: {
-    width: 100,
-  },
+  // button: {
+  //   //width: 100,
+  //   width: buttonWidth,
+  // },
   input: {
     width: 50,
     textAlign: "center",
