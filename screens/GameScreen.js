@@ -63,7 +63,7 @@ const GameScreen = (props) => {
     if (direction === "lower") {
       currentHigh.current = currentGuess;
     } else {
-      currentLow.current = currentGuess;
+      currentLow.current = currentGuess + 1;
     }
     const nextRandom = generateRandomBetween(currentLow.current, currentHigh.current, currentGuess);
     setCurrentGuess(nextRandom);
